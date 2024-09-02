@@ -1,14 +1,18 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+#![no_std]
+
+use embedded_hal::digital::{ErrorType, InputPin, OutputPin};
+
+pub struct Dht11<P: InputPin + OutputPin> {
+    pin: P
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl<P: InputPin + OutputPin> Dht11<P> {
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    pub fn new(pin: P) -> Self {
+       Self { pin } 
+    }
+
+    pub fn read(&mut self) -> Result<bool, <P as ErrorType>::Error> {
+        return self.pin.is_high();
     }
 }
