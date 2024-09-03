@@ -1,5 +1,6 @@
 # embedded-dht-rs
 
+![steps](/docs/steps.png)
 
 ## Step 1
 
