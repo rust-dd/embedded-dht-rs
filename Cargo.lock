@@ -7,6 +7,7 @@ name = "embedded-dht-rs"
 version = "0.1.0"
 dependencies = [
  "embedded-hal",
+ "panic-halt",
 ]
 
 [[package]]
@@ -14,3 +15,9 @@ name = "embedded-hal"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "361a90feb7004eca4019fb28352a9465666b24f840f5c3cddf0ff13920590b89"
+
+[[package]]
+name = "panic-halt"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de96540e0ebde571dc55c73d60ef407c653844e6f9a1e2fdbd40c07b9252d812"

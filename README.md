@@ -29,3 +29,7 @@ The DHT11 outputs 40 bits of data through the DATA pin, and the microprocessor r
 
 After outputting a low signal for 50 microseconds, the DHT11 completes sending the 40 bits of data and switches the DATA pin back to input mode, which, along with the pull-up resistor, returns to a high state. Meanwhile, the DHT11 internally re-measures the environmental temperature and humidity, records the new data, and waits for the next external signal.
 
+
+## Example Schematic 
+
+![step3](/docs/example_esp32_dht11.png)

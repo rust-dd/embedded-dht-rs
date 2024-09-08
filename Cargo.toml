@@ -6,3 +6,5 @@ license = "Apache-2.0"
 
 [dependencies]
 embedded-hal = "1.0.0"
+panic-halt = "0.2.0"
+

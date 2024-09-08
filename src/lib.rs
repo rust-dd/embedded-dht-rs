@@ -2,7 +2,7 @@
 
 use embedded_hal::{
     delay::DelayNs,
-    digital::{ErrorType, InputPin, OutputPin, PinState},
+    digital::{ErrorType, InputPin, OutputPin, PinState}
 };
 
 pub struct Dht11<P: InputPin + OutputPin, D: DelayNs> {
@@ -28,11 +28,33 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
         let _ = self.wait_until_state(PinState::High);
         let _ = self.wait_until_state(PinState::Low);
 
-        // Start reading 
+        // Start reading 40 bits
+        let humidity_integer = self.read_byte();
+        let humidity_decimal = self.read_byte();
+        let temperature_integer = self.read_byte();
+        let temperature_decimal = self.read_byte();
+        let checksum = self.read_byte();
 
         // TODO
+        panic!("{:?} {:?} {:?} {:?} {:?}", humidity_integer, humidity_decimal, temperature_integer, temperature_decimal, checksum);
 
         return self.pin.is_high();
+    }
+
+
+    fn read_byte(&mut self) -> Result<u8, <P as ErrorType>::Error> {
+        let mut byte: u8 = 0;
+        for n in 0..8 {
+            let _ = self.wait_until_state(PinState::High);
+            self.delay.delay_us(30);
+            let is_bit_1 = self.pin.is_high();
+            if is_bit_1.unwrap() {
+                let bit_mask = 1 << (7 - (n % 8));
+                byte |= bit_mask;
+                let _ = self.wait_until_state(PinState::Low);
+            }
+        }
+        Ok(byte)
     }
 
     /// Waits until the pin reaches the specified state.
