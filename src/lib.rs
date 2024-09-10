@@ -2,7 +2,7 @@
 
 use embedded_hal::{
     delay::DelayNs,
-    digital::{ErrorType, InputPin, OutputPin, PinState}
+    digital::{ErrorType, InputPin, OutputPin, PinState},
 };
 
 pub struct Dht11<P: InputPin + OutputPin, D: DelayNs> {
@@ -10,15 +10,20 @@ pub struct Dht11<P: InputPin + OutputPin, D: DelayNs> {
     delay: D,
 }
 
+pub struct SensorReading {
+    pub humidity: u8,
+    pub temperature: i8,
+}
+
 impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
     pub fn new(pin: P, delay: D) -> Self {
-        Self { pin, delay }
+        Self { pin, delay }     
     }
 
-    pub fn read(&mut self) -> Result<bool, <P as ErrorType>::Error> {
+    pub fn read(&mut self) -> Result<SensorReading, <P as ErrorType>::Error> {
         // Start communication: pull pin low for 18ms, then release.
         let _ = self.pin.set_low();
-        self.delay.delay_ms(18); 
+        self.delay.delay_ms(18);
         let _ = self.pin.set_high();
 
         // Wait for sensor to respond.
@@ -36,11 +41,12 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
         let checksum = self.read_byte();
 
         // TODO
-        panic!("{:?} {:?} {:?} {:?} {:?}", humidity_integer, humidity_decimal, temperature_integer, temperature_decimal, checksum);
-
-        return self.pin.is_high();
+        // panic!("{:?} {:?} {:?} {:?} {:?}", humidity_integer, humidity_decimal, temperature_integer, temperature_decimal, checksum);
+        Ok(SensorReading {
+            humidity: humidity_integer.unwrap(),
+            temperature: temperature_integer.unwrap() as i8,
+        })
     }
-
 
     fn read_byte(&mut self) -> Result<u8, <P as ErrorType>::Error> {
         let mut byte: u8 = 0;
@@ -64,15 +70,22 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
     /// # Arguments
     ///
     /// * `state` - The target `PinState` to wait for (either `Low` or `High`).
-    fn wait_until_state(&mut self, state: PinState) -> Result<(), <P as ErrorType>::Error>{
+    fn wait_until_state(&mut self, state: PinState) -> Result<(), <P as ErrorType>::Error> {
         loop {
             match state {
-                PinState::Low => if self.pin.is_low()? { break; },
-                PinState::High => if self.pin.is_high()? { break; }
+                PinState::Low => {
+                    if self.pin.is_low()? {
+                        break;
+                    }
+                }
+                PinState::High => {
+                    if self.pin.is_high()? {
+                        break;
+                    }
+                }
             };
             self.delay.delay_us(1);
         }
         Ok(())
     }
 }
-

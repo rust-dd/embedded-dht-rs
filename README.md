@@ -1,5 +1,61 @@
 # embedded-dht-rs
 
+Welcome to `embedded-dht-rs`, a Rust library designed to make working with DHT sensors a breeze!
+
+This library only depends on `embedded_hal`, making it versatile and compatible with virtually any microcontroller.
+
+### Features:
+- **DHT11 sensor support**: Fully implemented and ready to use.
+- **DHT22 sensor support**: Currently in progress – stay tuned!
+
+We’ve tested it with the ESP32-WROOM, and you can find a detailed example below to help you get started.
+
+## Getting Started
+
+### Example 
+
+```rust
+#![no_std]
+#![no_main]
+
+use embedded_dht_rs::Dht11;
+use esp_backtrace as _;
+use esp_hal::{
+    clock::ClockControl,
+    delay::Delay,
+    gpio::{Io, Level, OutputOpenDrain, Pull},
+    peripherals::Peripherals,
+    prelude::*,
+    system::SystemControl,
+};
+#[entry]
+fn main() -> ! {
+    let peripherals = Peripherals::take();
+    let system = SystemControl::new(peripherals.SYSTEM);
+    let clocks = ClockControl::boot_defaults(system.clock_control).freeze();
+    let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
+
+    esp_println::logger::init_logger_from_env();
+
+    let delay = Delay::new(&clocks);
+
+    let gpio4 = OutputOpenDrain::new(io.pins.gpio4, Level::High, Pull::None);
+    let mut led_sensor = Dht11::new(gpio4, delay);
+
+    loop {
+        delay.delay(1000.millis());
+        let reading = led_sensor.read().unwrap();
+        log::info!(
+            "Temperature: {}, humidity: {}",
+            reading.temperature,
+            reading.humidity
+        );
+    }
+}
+```
+
+---
+
 ![steps](/docs/steps.png)
 
 ## Step 1
