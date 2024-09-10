@@ -8,7 +8,7 @@ homepage = "https://github.com/rust-dd/embedded-dht-rs"
 documentation = "https://docs.rs/embedded-dht-rs"
 repository = "https://github.com/rust-dd/embedded-dht-rs"
 readme = "README.md"
-keywords = ["embedded", "no-std", "dht11", "dht22", "am2302", "temperature", "humidity", "sensor"]
+keywords = ["embedded", "no-std", "dht11", "dht22", "sensor"]
 
 [dependencies]
 embedded-hal = "1.0.0"
