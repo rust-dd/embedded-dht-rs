@@ -15,12 +15,17 @@ pub struct SensorReading {
     pub temperature: i8,
 }
 
+#[derive(Debug)]
+pub enum SensorError {
+    ChecksumMismatch,
+}
+
 impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
     pub fn new(pin: P, delay: D) -> Self {
-        Self { pin, delay }     
+        Self { pin, delay }
     }
 
-    pub fn read(&mut self) -> Result<SensorReading, <P as ErrorType>::Error> {
+    pub fn read(&mut self) -> Result<SensorReading, SensorError> {
         // Start communication: pull pin low for 18ms, then release.
         let _ = self.pin.set_low();
         self.delay.delay_ms(18);
@@ -34,21 +39,25 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
         let _ = self.wait_until_state(PinState::Low);
 
         // Start reading 40 bits
-        let humidity_integer = self.read_byte();
-        let humidity_decimal = self.read_byte();
-        let temperature_integer = self.read_byte();
-        let temperature_decimal = self.read_byte();
-        let checksum = self.read_byte();
+        let humidity_integer = self.read_byte()?;
+        let humidity_decimal = self.read_byte()?;
+        let temperature_integer = self.read_byte()?;
+        let temperature_decimal = self.read_byte()?;
+        let checksum = self.read_byte()?;
 
-        // TODO
-        // panic!("{:?} {:?} {:?} {:?} {:?}", humidity_integer, humidity_decimal, temperature_integer, temperature_decimal, checksum);
+        // Checksum
+        let sum = humidity_integer + humidity_decimal + temperature_integer + temperature_decimal;
+        if sum != checksum {
+            return Err(SensorError::ChecksumMismatch);
+        }
+
         Ok(SensorReading {
-            humidity: humidity_integer.unwrap(),
-            temperature: temperature_integer.unwrap() as i8,
+            humidity: humidity_integer,
+            temperature: temperature_integer as i8,
         })
     }
 
-    fn read_byte(&mut self) -> Result<u8, <P as ErrorType>::Error> {
+    fn read_byte(&mut self) -> Result<u8, SensorError> {
         let mut byte: u8 = 0;
         for n in 0..8 {
             let _ = self.wait_until_state(PinState::High);
