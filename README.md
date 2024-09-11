@@ -61,6 +61,9 @@ fn main() -> ! {
 
 ## Implementation Specification
 
+We have gathered all the information you need to understand in order to implement a library like this. Additionally, we’ve included a few comments in the code for those curious about the details, based on the following specification.
+
+
 ![steps](/docs/steps.png)
 
 ### Step 1

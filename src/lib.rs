@@ -80,19 +80,10 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
     ///
     /// * `state` - The target `PinState` to wait for (either `Low` or `High`).
     fn wait_until_state(&mut self, state: PinState) -> Result<(), <P as ErrorType>::Error> {
-        loop {
-            match state {
-                PinState::Low => {
-                    if self.pin.is_low()? {
-                        break;
-                    }
-                }
-                PinState::High => {
-                    if self.pin.is_high()? {
-                        break;
-                    }
-                }
-            };
+        while !match state {
+            PinState::Low => self.pin.is_low(),
+            PinState::High => self.pin.is_high(),
+        }? {
             self.delay.delay_us(1);
         }
         Ok(())
