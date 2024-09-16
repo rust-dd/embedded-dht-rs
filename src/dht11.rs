@@ -16,7 +16,7 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
         }
     }
 
-    pub fn read(&mut self) -> Result<SensorReading, SensorError> {
+    pub fn read(&mut self) -> Result<SensorReading<u8>, SensorError> {
         // Start communication: pull pin low for 18ms, then release.
         let _ = self.dht.pin.set_low();
         self.dht.delay.delay_ms(18);
@@ -46,8 +46,8 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht11<P, D> {
         }
 
         Ok(SensorReading {
-            humidity: humidity_integer as f32,
-            temperature: temperature_integer as f32,
+            humidity: humidity_integer,
+            temperature: temperature_integer,
         })
     }
 }
