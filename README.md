@@ -12,7 +12,7 @@ We’ve tested it with the ESP32-WROOM, and you can find a detailed example belo
 
 ## Getting Started
 
-### Example 
+### Example - ESP32
 
 ```rust
 #![no_std]
