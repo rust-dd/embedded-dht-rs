@@ -1,3 +1,7 @@
+![build workflow](https://github.com/rust-dd/embedded-dht-rs/actions/workflows/rust.yml/badge.svg)
+[![Crates.io](https://img.shields.io/crates/v/embedded-dht-rs?style=flat-square)](https://crates.io/crates/embedded-dht-rs)
+![Crates.io](https://img.shields.io/crates/l/embedded-dht-rs?style=flat-square)
+
 # embedded-dht-rs
 
 Welcome to `embedded-dht-rs`, a Rust library designed to make working with DHT sensors a breeze!
