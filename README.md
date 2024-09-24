@@ -14,6 +14,14 @@ We’ve tested it with the ESP32-WROOM, and you can find a detailed example belo
 
 ## Getting Started
 
+### Tutorials
+
+Here are some general tutorials that provide brief introductions to embedded programming:
+
+- **Part 1 (Introduction)** - [Introduction to Embedded Systems with Rust: A Beginner's Guide Using ESP32](https://rust-dd.com/post/introduction-to-embedded-systems-with-rust-a-beginner-s-guide-using-esp32)
+- **Part 2 (LED + Button)** - [Building a Simple LED and Button Interface with Rust on ESP32](https://rust-dd.com/post/building-a-simple-led-and-button-interface-with-rust-on-esp32)
+
+
 ### Example - ESP32
 
 ```rust
@@ -131,6 +139,16 @@ After powering on, wait at least 100ms. Before reading the temperature and humid
 
 
 #### Step 2
+Wait for 10ms before sending the 0xAC command to trigger the measurement. The command consists of two bytes: the first byte is 0x33 and the second byte is 0x00.
+
+#### Step 3
+Wait for 80ms for the measurement to complete. If Bit [7] of the status word is 0, the measurement is done, and you can proceed to read six bytes continuously; if not, continue waiting.
+
+#### Step 4
+After receiving the six bytes, the following byte is the CRC check data, which can be read if needed. If the receiver requires CRC validation, an ACK is sent after the sixth byte is received; otherwise, send a NACK to terminate. The initial CRC value is 0xFF, and the CRC8 check uses the polynomial: CRC [7:0] = 1 + X^4 + X^5 + X^8.
+
+#### Step 5
+Compute the temperature and humidity values.
 
 
 ## Comparison of DHT11, DHT20, and DHT22 40-Bit Data Formats
