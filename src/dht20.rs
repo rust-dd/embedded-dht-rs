@@ -53,18 +53,16 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
         let mut raw_humidity = measurement_response[1] as u32;
         raw_humidity = (raw_humidity << 8) + measurement_response[2] as u32;
         raw_humidity = (raw_humidity << 4) + (measurement_response[3] >> 4) as u32;
-        let humidity_percentage = 10.0;
+        let humidity_percentage = (raw_humidity as f32/ ((1 << 20) as f32)) * 100.0;
 
 
         // Temperature 20 bits
         let mut raw_temperature = (measurement_response[3] & 0b1111) as u32;
         raw_temperature = (raw_temperature << 8) + measurement_response[4] as u32;
         raw_temperature = (raw_temperature << 8) + measurement_response[5] as u32;
-        let temperatue_percentage = 10.0;
+        let temperatue_percentage = (raw_temperature as f32 / ((1 << 20) as f32)) * 200.0 - 50.0;
 
         // CRC 8 bits
-
-
 
 
         Ok(SensorReading {
