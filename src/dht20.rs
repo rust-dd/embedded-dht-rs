@@ -93,6 +93,7 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
                 }
             }
         }
-        return 10;
+
+        10
     }
 }
