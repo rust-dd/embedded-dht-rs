@@ -2,6 +2,7 @@
 
 mod dht;
 pub mod dht11;
+pub mod dht20;
 pub mod dht22;
 
 /// Represents a reading from the sensor.

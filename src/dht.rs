@@ -5,7 +5,7 @@ use embedded_hal::{
 
 use crate::SensorError;
 
-/// Common base struct for DHT sensors.
+/// Common base struct for DHT11, DHT22 sensors.
 pub struct Dht<P: InputPin + OutputPin, D: DelayNs> {
     pub pin: P,
     pub delay: D,
