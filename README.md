@@ -24,8 +24,6 @@ Here are some general tutorials that provide brief introductions to embedded pro
 
 ### Example - ESP32
 
-![running](/docs/example_esp32_wired.jpg)
-
 ```rust
 #![no_std]
 #![no_main]
@@ -125,5 +123,7 @@ The DHT20 differs from the DHT11 and DHT22 because it uses the I2C communication
 | **Range**              | Temp: 0–50°C<br>Hum: 20–90%                       | Temp: -40–80°C<br>Hum: 10–90%                          | Temp: -40–80°C<br>Hum: 0–100%                            |
 
 ## Example Schematic
+
+![running](/docs/example_esp32_wired.jpg)
 
 ![step3](/docs/example_esp32_dht11.png)
