@@ -20,6 +20,7 @@ Here are some general tutorials that provide brief introductions to embedded pro
 
 - **Part 1 (Introduction)** - [Introduction to Embedded Systems with Rust: A Beginner's Guide Using ESP32](https://rust-dd.com/post/introduction-to-embedded-systems-with-rust-a-beginner-s-guide-using-esp32)
 - **Part 2 (LED + Button)** - [Building a Simple LED and Button Interface with Rust on ESP32](https://rust-dd.com/post/building-a-simple-led-and-button-interface-with-rust-on-esp32)
+- **Part 3 (DHT11 Library)** - [Building a Rust library for DHT11 sensor](https://rust-dd.com/post/building-a-rust-library-for-dht11-sensor-a-step-by-step-guide)
 
 
 ### Example - ESP32
