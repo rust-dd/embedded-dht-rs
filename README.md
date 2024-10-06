@@ -24,11 +24,23 @@ Here are some general tutorials that provide brief introductions to embedded pro
 - **Part 3 (DHT11 Library)** - [Building a Rust library for DHT11 sensor](https://rust-dd.com/post/building-a-rust-library-for-dht11-sensor-a-step-by-step-guide)
 
 
-### Example - ESP32
+### Install
+
+
+To include the `dht11` feature:
 
 ```rust
 cargo add embedded-dht-rs
 ```
+
+To include all features (`dht11`, `dht20`, and `dht22`):
+
+```rust
+cargo add embedded-dht-rs --features "dht11,dht20,dht22"
+```
+
+### Example - ESP32
+
 
 ```rust
 #![no_std]
