@@ -27,7 +27,7 @@ Here are some general tutorials that provide brief introductions to embedded pro
 ### Example - ESP32
 
 ```rust
-cargo add cargo add embedded-dht-rs
+cargo add embedded-dht-rs
 ```
 
 ```rust
