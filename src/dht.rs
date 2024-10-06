@@ -73,3 +73,67 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht<P, D> {
         Ok(())
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use embedded_hal_mock::eh1::digital::{Mock, State, Transaction as PinTransaction};
+    use embedded_hal_mock::eh1::delay::NoopDelay as MockNoop;
+
+    #[test]
+    fn test_read_byte() {
+    // Set up the pin transactions to mock the behavior of the sensor during the reading of a byte.
+    // Each bit read from the sensor starts with a High state that lasts long enough
+    // to signify the bit, followed by reading whether it stays High (bit 1) or goes Low (bit 0).
+    let expectations = [
+        // Bit 1 - 0
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::Low), 
+
+        // Bit 2 - 1
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::High), 
+        PinTransaction::get(State::Low),
+
+        // Bit 3 - 0
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::Low), 
+
+        // Bit 4 - 1
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::Low),
+
+        // Bit 5 - 0
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::Low), 
+
+        // Bit 6 - 1
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::Low), 
+
+        // Bit 7 - 1
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::Low), 
+
+        // Bit 8 - 1
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::High),
+        PinTransaction::get(State::Low), 
+        
+    ];
+
+        let mock_pin = Mock::new(&expectations);
+        let mock_delay = MockNoop::new();
+
+        let mut dht = Dht::new(mock_pin, mock_delay);
+
+        let result = dht.read_byte().unwrap();
+        assert_eq!(result, 0b01010111);
+        
+        dht.pin.done();
+    }
+}

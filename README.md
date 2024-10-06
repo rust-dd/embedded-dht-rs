@@ -1,16 +1,17 @@
 ![build workflow](https://github.com/rust-dd/embedded-dht-rs/actions/workflows/rust.yml/badge.svg)
 [![Crates.io](https://img.shields.io/crates/v/embedded-dht-rs?style=flat-square)](https://crates.io/crates/embedded-dht-rs)
 ![Crates.io](https://img.shields.io/crates/l/embedded-dht-rs?style=flat-square)
+[![API](https://docs.rs/embedded-dht-rs/badge.svg)](https://docs.rs/embedded-dht-rs)
 
 # embedded-dht-rs
 
-Welcome to `embedded-dht-rs`, a Rust library designed to make working with DHT sensors a breeze!
+`embedded-dht-rs` is a Rust library designed to simplify interfacing with DHT sensors in embedded systems.
 
-This library only depends on `embedded_hal`, making it versatile and compatible with virtually any microcontroller.
+This library is `#![no_std]` and depends only on `embedded_hal`, making it versatile and compatible with virtually any microcontroller.
 
 **Support for DHT11, DHT20, and DHT22 Sensors**: All three sensors are fully implemented and ready for use.
 
-We’ve tested it with the ESP32-WROOM, and you can find a detailed example below to help you get started.
+The library has been tested with the ESP32-WROOM, and a detailed example is provided below to help you get started.
 
 ## Getting Started
 
@@ -24,6 +25,10 @@ Here are some general tutorials that provide brief introductions to embedded pro
 
 
 ### Example - ESP32
+
+```rust
+cargo add cargo add embedded-dht-rs
+```
 
 ```rust
 #![no_std]
