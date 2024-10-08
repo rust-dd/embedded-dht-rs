@@ -136,4 +136,23 @@ mod tests {
         
         dht.pin.done();
     }
+
+    #[test]
+    fn test_wait_until_state() {
+        let expectations = [
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::High),
+        ];
+
+        let mock_pin = Mock::new(&expectations);
+        let mock_delay = MockNoop::new();
+
+        let mut dht = Dht::new(mock_pin, mock_delay);
+
+        let result = dht.wait_until_state(PinState::High);
+        assert!(result.is_ok());
+
+        dht.pin.done();
+    }
 }
