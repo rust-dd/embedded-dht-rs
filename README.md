@@ -30,7 +30,7 @@ Here are some general tutorials that provide brief introductions to embedded pro
 To include the `dht11` feature:
 
 ```rust
-cargo add embedded-dht-rs
+cargo add embedded-dht-rs --features "dht11"
 ```
 
 To include all features (`dht11`, `dht20`, and `dht22`):
@@ -41,6 +41,7 @@ cargo add embedded-dht-rs --features "dht11,dht20,dht22"
 
 ### Example - ESP32
 
+You can find the full example in the [examples](./examples) folder.
 
 ```rust
 #![no_std]
@@ -71,8 +72,7 @@ fn main() -> ! {
         io.pins.gpio21,
         io.pins.gpio22, 
         HertzU32::kHz(400),
-        &clocks, 
-        None,
+        &clocks
     );
 
     let mut dht11 = Dht11::new(od_for_dht11, delay);
