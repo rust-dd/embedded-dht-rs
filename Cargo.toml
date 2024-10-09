@@ -9,6 +9,7 @@ documentation = "https://docs.rs/embedded-dht-rs"
 repository = "https://github.com/rust-dd/embedded-dht-rs"
 readme = "README.md"
 keywords = ["embedded", "no-std", "dht11", "dht20", "dht22"]
+autoexamples = false
 
 [dependencies]
 embedded-hal = "1.0.0"
