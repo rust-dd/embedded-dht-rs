@@ -142,6 +142,5 @@ The DHT20 differs from the DHT11 and DHT22 because it uses the I2C communication
 
 ## Example Schematic
 
-![running](/docs/example_esp32_wired.jpg)
-
-![step3](/docs/example_esp32_schematic.png)
+| ![Schematic](./docs/example_esp32_schematic.png) [Click to zoom](./docs/example_esp32_schematic.png) | ![Running](./docs/example_esp32_wired.jpg) [Click to zoom](./docs/example_esp32_wired.jpg) |
+|:--:|:--:|
