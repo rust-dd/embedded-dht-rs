@@ -29,3 +29,7 @@ doctest = false
 [profile.release]
 codegen-units = 1
 lto = true
+
+[package.metadata.docs.rs]
+# build docs for all features
+all-features = true
