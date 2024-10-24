@@ -48,8 +48,14 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht22<P, D> {
         let humidity_value = ((humidity_high as u16) << 8) | (humidity_low as u16);
         let humidity_percentage = humidity_value as f32 / 10.0;
 
-        let temperature_value = ((temperature_high as u16) << 8) | (temperature_low as u16);
-        let temperatue_percentage = temperature_value as f32 / 10.0;
+        let temperature_high_clean = temperature_high & 0x7F; // 0x7F = 0111 1111
+        let temperature_value = ((temperature_high_clean as u16) << 8) | (temperature_low as u16);
+        let mut temperatue_percentage = temperature_value as f32 / 10.0;
+
+        if temperature_high & 0x80 != 0 {
+            temperatue_percentage = -temperatue_percentage;
+        }
+
 
         Ok(SensorReading {
             humidity: humidity_percentage,
