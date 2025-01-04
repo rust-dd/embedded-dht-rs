@@ -114,7 +114,7 @@ fn main() -> ! {
 }
 ```
 
-![running](/docs/example_esp32_dht_running.png)
+![running](https://raw.githubusercontent.com/rust-dd/embedded-dht-rs/refs/heads/main/docs/example_esp32_dht_running.png)
 
 
 ## Implementation Specification
@@ -124,8 +124,8 @@ We have gathered all the information you need to understand in order to implemen
 The DHT20 differs from the DHT11 and DHT22 because it uses the I2C communication protocol, while both the DHT11 and DHT22 rely on a single-wire signal for data transmission.
 
 
-- [DHT11 and DHT22 Documentation](docs/dht11_22.md)
-- [DHT20 Documentation](docs/dht20.md)
+- [DHT11 and DHT22 Documentation](https://github.com/rust-dd/embedded-dht-rs/blob/main/docs/dht11_22.md)
+- [DHT20 Documentation](https://github.com/rust-dd/embedded-dht-rs/blob/main/docs/dht20.md)
 
 
 
@@ -142,5 +142,5 @@ The DHT20 differs from the DHT11 and DHT22 because it uses the I2C communication
 
 ## Example Schematic
 
-| ![Schematic](./docs/example_esp32_schematic.png) [Click to zoom](./docs/example_esp32_schematic.png) | ![Running](./docs/example_esp32_wired.jpg) [Click to zoom](./docs/example_esp32_wired.jpg) |
+| ![Schematic](https://raw.githubusercontent.com/rust-dd/embedded-dht-rs/refs/heads/main/docs/example_esp32_schematic.png) [Click to zoom](https://raw.githubusercontent.com/rust-dd/embedded-dht-rs/refs/heads/main/docs/example_esp32_schematic.png) | ![Running](https://raw.githubusercontent.com/rust-dd/embedded-dht-rs/refs/heads/main/docs/example_esp32_wired.jpg) [Click to zoom](https://raw.githubusercontent.com/rust-dd/embedded-dht-rs/refs/heads/main/docs/example_esp32_wired.jpg) |
 |:--:|:--:|
