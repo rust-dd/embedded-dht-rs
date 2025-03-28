@@ -5,6 +5,8 @@ use embedded_hal::{
 
 use crate::SensorError;
 
+const DEFAULT_MAX_ATTEMPTS: usize = 10_000;
+
 /// Common base struct for DHT11, DHT22 sensors.
 pub struct Dht<P: InputPin + OutputPin, D: DelayNs> {
     pub pin: P,
@@ -61,16 +63,24 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht<P, D> {
     /// # Returns
     ///
     /// - `Ok(())`: When the pin reaches the desired state.
-    /// - `Err(SensorError<P::Error>)`: If an error occurs while reading the pin state.
+    /// - `Err(SensorError::Timeout)`: If the desired state is not reached in time.
+    /// - `Err(SensorError::Io(...))`: If a pin error occurs while reading the pin state.
     ///
-    pub fn wait_until_state(&mut self, state: PinState) -> Result<(), <P as ErrorType>::Error> {
-        while !match state {
-            PinState::Low => self.pin.is_low(),
-            PinState::High => self.pin.is_high(),
-        }? {
-            self.delay.delay_us(1);
+    pub fn wait_until_state(&mut self, state: PinState) -> Result<(), SensorError> {
+        for _ in 0..DEFAULT_MAX_ATTEMPTS {
+            let is_state = match state {
+                PinState::Low => self.pin.is_low(),
+                PinState::High => self.pin.is_high(),
+            };
+
+            match is_state {
+                Ok(true) => return Ok(()),
+                Ok(false) => self.delay.delay_us(1),
+                Err(_) => return Err(SensorError::PinError)
+            }
         }
-        Ok(())
+
+        Err(SensorError::Timeout)
     }
 }
 
