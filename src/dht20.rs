@@ -62,7 +62,7 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
         let mut raw_temperature = (measurement_response[3] & 0b1111) as u32;
         raw_temperature = (raw_temperature << 8) + measurement_response[4] as u32;
         raw_temperature = (raw_temperature << 8) + measurement_response[5] as u32;
-        let temperatue_percentage = (raw_temperature as f32 / ((1 << 20) as f32)) * 200.0 - 50.0;
+        let temperature_percentage = (raw_temperature as f32 / ((1 << 20) as f32)) * 200.0 - 50.0;
 
         // Compare the calculated CRC with the received CRC
         let data = &measurement_response[..6];
@@ -74,7 +74,7 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
 
         Ok(SensorReading {
             humidity: humidity_percentage,
-            temperature: temperatue_percentage,
+            temperature: temperature_percentage,
         })
     }
 
