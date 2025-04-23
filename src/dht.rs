@@ -39,13 +39,20 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht<P, D> {
     pub fn read_byte(&mut self) -> Result<u8, SensorError> {
         let mut byte: u8 = 0;
         for n in 0..8 {
-            let _ = self.wait_until_state(PinState::High);
+            match self.wait_until_state(PinState::High) {
+                Ok(_) => {}
+                Err(err) => return Err(err),
+            };
+
             self.delay.delay_us(30);
             let is_bit_1 = self.pin.is_high();
             if is_bit_1.unwrap() {
                 let bit_mask = 1 << (7 - (n % 8));
                 byte |= bit_mask;
-                let _ = self.wait_until_state(PinState::Low);
+                match self.wait_until_state(PinState::Low) {
+                    Ok(_) => {}
+                    Err(err) => return Err(err),
+                };
             }
         }
         Ok(byte)
@@ -76,7 +83,7 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht<P, D> {
             match is_state {
                 Ok(true) => return Ok(()),
                 Ok(false) => self.delay.delay_us(1),
-                Err(_) => return Err(SensorError::PinError)
+                Err(_) => return Err(SensorError::PinError),
             }
         }
 
@@ -84,57 +91,48 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht<P, D> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use embedded_hal_mock::eh1::digital::{Mock, State, Transaction as PinTransaction};
     use embedded_hal_mock::eh1::delay::NoopDelay as MockNoop;
+    use embedded_hal_mock::eh1::digital::{Mock, State, Transaction as PinTransaction};
 
     #[test]
     fn test_read_byte() {
-    // Set up the pin transactions to mock the behavior of the sensor during the reading of a byte.
-    // Each bit read from the sensor starts with a High state that lasts long enough
-    // to signify the bit, followed by reading whether it stays High (bit 1) or goes Low (bit 0).
-    let expectations = [
-        // Bit 1 - 0
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::Low), 
-
-        // Bit 2 - 1
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::High), 
-        PinTransaction::get(State::Low),
-
-        // Bit 3 - 0
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::Low), 
-
-        // Bit 4 - 1
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::Low),
-
-        // Bit 5 - 0
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::Low), 
-
-        // Bit 6 - 1
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::Low), 
-
-        // Bit 7 - 1
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::Low), 
-
-        // Bit 8 - 1
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::High),
-        PinTransaction::get(State::Low), 
-        
-    ];
+        // Set up the pin transactions to mock the behavior of the sensor during the reading of a byte.
+        // Each bit read from the sensor starts with a High state that lasts long enough
+        // to signify the bit, followed by reading whether it stays High (bit 1) or goes Low (bit 0).
+        let expectations = [
+            // Bit 1 - 0
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::Low),
+            // Bit 2 - 1
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::Low),
+            // Bit 3 - 0
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::Low),
+            // Bit 4 - 1
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::Low),
+            // Bit 5 - 0
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::Low),
+            // Bit 6 - 1
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::Low),
+            // Bit 7 - 1
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::Low),
+            // Bit 8 - 1
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::High),
+            PinTransaction::get(State::Low),
+        ];
 
         let mock_pin = Mock::new(&expectations);
         let mock_delay = MockNoop::new();
@@ -143,7 +141,7 @@ mod tests {
 
         let result = dht.read_byte().unwrap();
         assert_eq!(result, 0b01010111);
-        
+
         dht.pin.done();
     }
 
