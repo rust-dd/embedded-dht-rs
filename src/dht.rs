@@ -1,10 +1,13 @@
 use embedded_hal::{
     delay::DelayNs,
-    digital::{ErrorType, InputPin, OutputPin, PinState},
+    digital::{InputPin, OutputPin, PinState},
 };
 
 use crate::SensorError;
 
+#[cfg(test)]
+const DEFAULT_MAX_ATTEMPTS: usize = 10;
+#[cfg(not(test))]
 const DEFAULT_MAX_ATTEMPTS: usize = 10_000;
 
 /// Common base struct for DHT11, DHT22 sensors.
@@ -93,9 +96,13 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht<P, D> {
 
 #[cfg(test)]
 mod tests {
+    extern crate std;
+    use std::io::ErrorKind;
+
     use super::*;
     use embedded_hal_mock::eh1::delay::NoopDelay as MockNoop;
     use embedded_hal_mock::eh1::digital::{Mock, State, Transaction as PinTransaction};
+    use embedded_hal_mock::eh1::MockError;
 
     #[test]
     fn test_read_byte() {
@@ -160,6 +167,47 @@ mod tests {
 
         let result = dht.wait_until_state(PinState::High);
         assert!(result.is_ok());
+
+        dht.pin.done();
+    }
+
+    #[test]
+    fn test_wait_until_state_timeout_error() {
+        let expectations: [PinTransaction; DEFAULT_MAX_ATTEMPTS] = [
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+            PinTransaction::get(State::Low),
+        ];
+
+        let mock_pin = Mock::new(&expectations);
+        let mock_delay = MockNoop::new();
+
+        let mut dht = Dht::new(mock_pin, mock_delay);
+
+        let result = dht.wait_until_state(PinState::High);
+        assert!(matches!(result, Err(SensorError::Timeout)));
+
+        dht.pin.done();
+    }
+
+    #[test]
+    fn test_wait_until_state_pin_error() {
+        let err = MockError::Io(ErrorKind::NotConnected);
+        let expectations = [PinTransaction::get(State::High).with_error(err)];
+        let mock_pin = Mock::new(&expectations);
+        let mock_delay = MockNoop::new();
+
+        let mut dht = Dht::new(mock_pin, mock_delay);
+
+        let result = dht.wait_until_state(PinState::High);
+        assert!(matches!(result, Err(SensorError::PinError)));
 
         dht.pin.done();
     }
