@@ -1,6 +1,6 @@
 [package]
 name = "embedded-dht-rs"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "A driver for interfacing with DHT11, DHT20 (AHT20), DHT22 (AM2302) temperature and humidity sensors, designed for embedded systems."
@@ -21,10 +21,10 @@ embedded-hal-mock = "0.11.1"
 dht11 = []
 dht20 = []
 dht22 = []
-default = [] 
+default = []
 
 [lib]
-doctest = false  
+doctest = false
 
 [profile.release]
 codegen-units = 1
