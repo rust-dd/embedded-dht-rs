@@ -23,5 +23,5 @@ pub struct SensorReading<T> {
 pub enum SensorError {
     ChecksumMismatch,
     Timeout,
-    PinError
+    PinError,
 }
