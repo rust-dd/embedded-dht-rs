@@ -56,7 +56,6 @@ impl<P: InputPin + OutputPin, D: DelayNs> Dht22<P, D> {
             temperature_percentage = -temperature_percentage;
         }
 
-
         Ok(SensorReading {
             humidity: humidity_percentage,
             temperature: temperature_percentage,

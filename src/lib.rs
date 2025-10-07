@@ -20,8 +20,9 @@ pub struct SensorReading<T> {
 
 /// Possible errors when interacting with the sensor.
 #[derive(Debug)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum SensorError {
     ChecksumMismatch,
     Timeout,
-    PinError
+    PinError,
 }
