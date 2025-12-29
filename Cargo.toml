@@ -35,3 +35,8 @@ lto = true
 [package.metadata.docs.rs]
 # build docs for all features
 all-features = true
+
+[[example]]
+name = "embedded-dht-rs-on-esp32"
+path = "examples/src/main.rs"
+required-features = ["dht11", "dht20", "dht22"]
