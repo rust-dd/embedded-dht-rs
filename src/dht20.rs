@@ -1,7 +1,13 @@
-use embedded_hal::{delay::DelayNs, i2c::I2c};
+#[cfg(not(feature = "async"))]
+use embedded_hal as hal;
+#[cfg(feature = "async")]
+use embedded_hal_async as hal;
+
+use hal::{delay::DelayNs, i2c::I2c};
 
 use crate::{SensorError, SensorReading};
 
+/// DHT20/AHT20 temperature and humidity sensor using I2C.
 pub struct Dht20<I: I2c, D: DelayNs> {
     pub i2c: I,
     pub delay: D,
@@ -14,43 +20,53 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
         Self { i2c, delay }
     }
 
-    pub fn read(&mut self) -> Result<SensorReading<f32>, SensorError> {
+    #[maybe_async_cfg::maybe(
+        sync(not(feature = "async"), keep_self),
+        async(feature = "async", keep_self)
+    )]
+    pub async fn read(&mut self) -> Result<SensorReading<f32>, SensorError> {
         // Check status
         let mut status_response: [u8; 1] = [0; 1];
         let _ = self
             .i2c
-            .write_read(Self::SENSOR_ADDRESS, &[0x71], &mut status_response);
+            .write_read(Self::SENSOR_ADDRESS, &[0x71], &mut status_response)
+            .await;
 
         // Callibration if needed
         if status_response[0] & 0x18 != 0x18 {
-            let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1B, 0, 0]);
-            let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1C, 0, 0]);
-            let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1E, 0, 0]);
+            let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1B, 0, 0]).await;
+            let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1C, 0, 0]).await;
+            let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1E, 0, 0]).await;
         }
 
         // Trigger the measurement
-        self.delay.delay_ms(10);
-        let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0xAC, 0x33, 0x00]);
+        self.delay.delay_ms(10).await;
+        let _ = self
+            .i2c
+            .write(Self::SENSOR_ADDRESS, &[0xAC, 0x33, 0x00])
+            .await;
 
         // Read the measurement status
-        self.delay.delay_ms(80);
+        self.delay.delay_ms(80).await;
         loop {
             let mut measurement_status_response: [u8; 1] = [0; 1];
             let _ = self
                 .i2c
-                .read(Self::SENSOR_ADDRESS, &mut measurement_status_response);
+                .read(Self::SENSOR_ADDRESS, &mut measurement_status_response)
+                .await;
             let status_word = measurement_status_response[0];
             if status_word & 0b1000_0000 == 0 {
                 break;
             }
-            self.delay.delay_ms(1);
+            self.delay.delay_ms(1).await;
         }
 
         // Read the measurement (1 status + 5 data + 1 crc)
         let mut measurement_response: [u8; 7] = [0; 7];
         let _ = self
             .i2c
-            .read(Self::SENSOR_ADDRESS, &mut measurement_response);
+            .read(Self::SENSOR_ADDRESS, &mut measurement_response)
+            .await;
 
         // Humidity 20 bits (8 + 8 + 4)
         let mut raw_humidity = measurement_response[1] as u32;

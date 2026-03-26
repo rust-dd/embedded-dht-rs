@@ -9,7 +9,7 @@
 
 This library is `#![no_std]` and depends only on `embedded_hal`, making it versatile and compatible with virtually any microcontroller.
 
-**Support for DHT11, DHT20, and DHT22 Sensors**: All three sensors are fully implemented and ready for use.
+Support for **DHT11, DHT22, and DHT20 (AHT20)** sensors: All three sensors are fully implemented and ready for use.
 
 The library has been tested with the ESP32-WROOM, and a detailed example is provided below to help you get started.
 

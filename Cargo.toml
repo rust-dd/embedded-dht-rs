@@ -8,17 +8,20 @@ homepage = "https://github.com/rust-dd/embedded-dht-rs"
 documentation = "https://docs.rs/embedded-dht-rs"
 repository = "https://github.com/rust-dd/embedded-dht-rs"
 readme = "README.md"
-keywords = ["embedded", "no-std", "dht11", "dht20", "dht22"]
+keywords = ["embedded", "embedded-hal", "no-std", "dht11", "dht20", "dht22"]
 autoexamples = false
 
 [dependencies]
 defmt = { version = "1.0.1", optional = true }
 embedded-hal = "1.0.0"
+embedded-hal-async = { version = "1.0.0", optional = true }
+maybe-async-cfg = "0.2.5"
 
 [dev-dependencies]
 embedded-hal-mock = "0.11.1"
 
 [features]
+async = ["dep:embedded-hal-async"]
 dht11 = []
 dht20 = []
 dht22 = []
