@@ -20,6 +20,7 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
         Self { i2c, delay }
     }
 
+    /// Takes at least 80 ms to be done.
     #[maybe_async_cfg::maybe(
         sync(not(feature = "async"), keep_self),
         async(feature = "async", keep_self)
@@ -37,10 +38,10 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
             let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1B, 0, 0]).await;
             let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1C, 0, 0]).await;
             let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0x1E, 0, 0]).await;
+            self.delay.delay_ms(10).await;
         }
 
         // Trigger the measurement
-        self.delay.delay_ms(10).await;
         let _ = self
             .i2c
             .write(Self::SENSOR_ADDRESS, &[0xAC, 0x33, 0x00])
@@ -92,6 +93,17 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
             humidity: humidity_percentage,
             temperature: temperature_percentage,
         })
+    }
+
+    /// Perform a soft reset to force the device into a well-defined state
+    /// without removing the power supply.
+    #[maybe_async_cfg::maybe(
+        sync(not(feature = "async"), keep_self),
+        async(feature = "async", keep_self)
+    )]
+    pub async fn soft_reset(&mut self) {
+        let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0xBA]).await;
+        self.delay.delay_ms(20).await;
     }
 
     fn calculate_crc(data: &[u8]) -> u8 {
