@@ -1,19 +1,34 @@
-#[cfg(not(feature = "async"))]
-use embedded_hal as hal;
+use embedded_hal::{delay::DelayNs, i2c::I2c};
 #[cfg(feature = "async")]
-use embedded_hal_async as hal;
-
-use hal::{delay::DelayNs, i2c::I2c};
+use embedded_hal_async::{delay::DelayNs as AsyncDelayNs, i2c::I2c as AsyncI2c};
 
 use crate::{SensorError, SensorReading};
 
 /// DHT20/AHT20 temperature and humidity sensor using I2C.
-pub struct Dht20<I: I2c, D: DelayNs> {
+#[maybe_async_cfg::maybe(
+    idents(
+        Dht20Async(sync = "Dht20", async),
+        AsyncI2c(sync = "I2c", async),
+        AsyncDelayNs(sync = "DelayNs", async)
+    ),
+    sync(all()),
+    async(feature = "async")
+)]
+pub struct Dht20Async<I: AsyncI2c, D: AsyncDelayNs> {
     pub i2c: I,
     pub delay: D,
 }
 
-impl<I: I2c, D: DelayNs> Dht20<I, D> {
+#[maybe_async_cfg::maybe(
+    idents(
+        Dht20Async(sync = "Dht20", async),
+        AsyncI2c(sync = "I2c", async),
+        AsyncDelayNs(sync = "DelayNs", async)
+    ),
+    sync(all()),
+    async(feature = "async")
+)]
+impl<I: AsyncI2c, D: AsyncDelayNs> Dht20Async<I, D> {
     const SENSOR_ADDRESS: u8 = 0x38;
 
     pub fn new(i2c: I, delay: D) -> Self {
@@ -21,10 +36,6 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
     }
 
     /// Takes at least 80 ms to be done.
-    #[maybe_async_cfg::maybe(
-        sync(not(feature = "async"), keep_self),
-        async(feature = "async", keep_self)
-    )]
     pub async fn read(&mut self) -> Result<SensorReading<f32>, SensorError> {
         // Check status
         let mut status_response: [u8; 1] = [0; 1];
@@ -97,10 +108,6 @@ impl<I: I2c, D: DelayNs> Dht20<I, D> {
 
     /// Perform a soft reset to force the device into a well-defined state
     /// without removing the power supply.
-    #[maybe_async_cfg::maybe(
-        sync(not(feature = "async"), keep_self),
-        async(feature = "async", keep_self)
-    )]
     pub async fn soft_reset(&mut self) {
         let _ = self.i2c.write(Self::SENSOR_ADDRESS, &[0xBA]).await;
         self.delay.delay_ms(20).await;
