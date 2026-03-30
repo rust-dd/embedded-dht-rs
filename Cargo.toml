@@ -10,6 +10,7 @@ repository = "https://github.com/rust-dd/embedded-dht-rs"
 readme = "README.md"
 keywords = ["embedded", "embedded-hal", "no-std", "dht11", "dht20", "dht22"]
 autoexamples = false
+exclude = ["docs/*.png", "docs/*.jpg"]
 
 [dependencies]
 defmt = { version = "1.0.1", optional = true }
